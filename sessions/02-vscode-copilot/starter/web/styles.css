@@ -1,0 +1,31 @@
+:root {
+  --bg: #f5f2e9;
+  --fg: #13293d;
+  --card: #fffdf8;
+  --accent: #ff6b35;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top right, #ffe8d6, var(--bg));
+  color: var(--fg);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+.container {
+  max-width: 720px;
+  margin: 3rem auto;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: 0 12px 30px rgba(19, 41, 61, 0.12);
+}
+
+button {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+}
