@@ -37,3 +37,7 @@ This repository contains all technical demos for GitHub Copilot Dev Days Malta 2
 
 - GitHub organization: https://github.com/MMAUG-ORG
 - Repository name: mmaug-github-copilotdevdays2026-technical-demos
+
+## Contributors
+
+- Imoh Etuk (GitHub: https://github.com/imohweb)
