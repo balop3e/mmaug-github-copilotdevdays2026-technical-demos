@@ -1,25 +1,88 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MMAUG Session 2 Starter</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="container">
-      <h1>VS Code + Copilot Demo Starter</h1>
-      <p id="status">Build an accessible and polished UI using Copilot.</p>
-      <button id="theme-toggle" type="button">Toggle Theme</button>
-      <section>
-        <h2>Task List</h2>
-        <ul id="task-list">
-          <li>Improve layout hierarchy</li>
-          <li>Add keyboard shortcuts</li>
-          <li>Improve color contrast</li>
-        </ul>
-      </section>
-    </main>
-    <script src="app.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow – Dev Days 2026</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- Skip-to-main for keyboard users -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">✓</span>
+        <span class="brand-name">TaskFlow</span>
+      </div>
+      <nav aria-label="Primary navigation">
+        <button
+          id="theme-toggle"
+          class="btn btn-ghost"
+          aria-label="Toggle dark theme"
+          aria-pressed="false"
+        >
+          <span id="theme-icon" aria-hidden="true">🌙</span>
+          <span id="theme-label">Dark mode</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" class="main-content" role="main">
+    <section class="task-section" aria-labelledby="tasks-heading">
+      <div class="section-header">
+        <h1 id="tasks-heading">My Tasks</h1>
+        <span id="task-count" class="badge" aria-live="polite" aria-atomic="true"></span>
+      </div>
+
+      <!-- Add task form -->
+      <form id="add-task-form" class="add-task-form" aria-label="Add a new task" novalidate>
+        <label for="task-input" class="sr-only">New task title</label>
+        <input
+          id="task-input"
+          type="text"
+          class="task-input"
+          placeholder="Add a new task…"
+          autocomplete="off"
+          aria-required="true"
+          maxlength="120"
+        />
+        <button type="submit" class="btn btn-primary" aria-label="Add task">
+          <span aria-hidden="true">+</span> Add
+        </button>
+      </form>
+
+      <!-- Filter bar -->
+      <div class="filter-bar" role="group" aria-label="Filter tasks">
+        <button class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter-btn" data-filter="active" aria-pressed="false">Active</button>
+        <button class="filter-btn" data-filter="completed" aria-pressed="false">Completed</button>
+      </div>
+
+      <!-- Task list -->
+      <ul id="task-list" class="task-list" aria-label="Task list" aria-live="polite">
+        <!-- Items injected by app.js -->
+      </ul>
+
+      <p id="empty-state" class="empty-state" hidden>
+        🎉 No tasks here. Add one above!
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <p>
+      Built with <span aria-label="love">❤️</span> at
+      <a href="https://github.com/MMAUG-ORG" target="_blank" rel="noopener noreferrer">
+        MMAUG Dev Days 2026
+      </a>
+    </p>
+  </footer>
+
+  <div id="status" role="status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <script src="app.js"></script>
+</body>
 </html>

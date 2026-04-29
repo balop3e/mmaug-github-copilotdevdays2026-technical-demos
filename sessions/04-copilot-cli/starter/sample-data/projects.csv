@@ -1,0 +1,6 @@
+id,name,lead,status,deadline,team_size
+1,Dev Days 2026,imoh,active,2026-05-01,8
+2,Platform Rewrite,ben,active,2026-06-30,5
+3,Mobile App,emmanuel,planning,2026-07-15,4
+4,Security Audit,imoh,completed,2026-04-15,3
+5,Analytics Dashboard,ben,active,2026-05-20,6
