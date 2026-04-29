@@ -1,4 +1,5 @@
 from typing import List
+from datetime import date
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -11,12 +12,13 @@ class Task(BaseModel):
     title: str
     priority: str
     completed: bool = False
+    due_date: date | None = None
 
 
 TASKS: List[Task] = [
-    Task(id=1, title="Create session plan", priority="high"),
-    Task(id=2, title="Prepare demo repo", priority="medium"),
-    Task(id=3, title="Write challenge prompts", priority="low"),
+    Task(id=1, title="Create session plan", priority="high", due_date=date(2026, 4, 30)),
+    Task(id=2, title="Prepare demo repo", priority="medium", due_date=date(2026, 5, 1)),
+    Task(id=3, title="Write challenge prompts", priority="low", due_date=date(2026, 5, 2)),
 ]
 
 
@@ -26,7 +28,10 @@ def health() -> dict:
 
 
 @app.get("/tasks", response_model=List[Task])
-def list_tasks(priority: str | None = None) -> List[Task]:
-    if priority is None:
-        return TASKS
-    return [task for task in TASKS if task.priority == priority]
+def list_tasks(due_date: date | None = None, priority: str | None = None) -> List[Task]:
+    results = TASKS
+    if priority is not None:
+        results = [task for task in results if task.priority == priority]
+    if due_date is not None:
+        results = [task for task in results if task.due_date == due_date]
+    return results
