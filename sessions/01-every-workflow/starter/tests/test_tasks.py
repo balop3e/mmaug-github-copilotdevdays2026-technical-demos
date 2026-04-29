@@ -100,10 +100,9 @@ def test_filter_by_priority_low_returns_match() -> None:
     assert items[0]["priority"] == "low"
 
 
-def test_filter_by_priority_nonexistent_returns_empty() -> None:
+def test_filter_by_priority_nonexistent_returns_422() -> None:
     response = client.get("/tasks", params={"priority": "critical"})
-    assert response.status_code == 200
-    assert response.json() == []
+    assert response.status_code == 422
 
 
 # ---------------------------------------------------------------------------
@@ -260,4 +259,22 @@ def test_invalid_date_partial_returns_422() -> None:
 
 def test_invalid_date_empty_string_returns_422() -> None:
     response = client.get("/tasks", params={"due_date": ""})
+    assert response.status_code == 422
+
+# ---------------------------------------------------------------------------
+# Priority enum validation (post code-review fix)
+# ---------------------------------------------------------------------------
+
+def test_invalid_priority_value_returns_422() -> None:
+    response = client.get("/tasks", params={"priority": "critical"})
+    assert response.status_code == 422
+
+
+def test_priority_is_case_sensitive_uppercase_returns_422() -> None:
+    response = client.get("/tasks", params={"priority": "High"})
+    assert response.status_code == 422
+
+
+def test_priority_empty_string_returns_422() -> None:
+    response = client.get("/tasks", params={"priority": ""})
     assert response.status_code == 422
