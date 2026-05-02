@@ -43,8 +43,8 @@ jobs:
           python-version: "3.13"
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Run orchestrator
-        run: python orchestrator/main.py
+      - name: Run orchestrator tests
+        run: pytest -q
 
   validate-session-04:
     runs-on: ubuntu-latest
