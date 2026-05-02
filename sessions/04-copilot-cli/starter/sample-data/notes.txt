@@ -1,0 +1,8 @@
+GitHub Copilot CLI demo – session 4 notes
+===========================================
+- copilot cli transforms natural language to shell commands
+- always review before executing
+- dry-run first for destructive operations
+- agentic workflows build on CLI primitives
+- context engineering improves suggestion quality
+vscode copilot inline completions save keystrokes

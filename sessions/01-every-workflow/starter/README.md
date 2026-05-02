@@ -1,20 +1,74 @@
-# MMAUG Session 1 – Task API
+# Task Management API
 
-A minimal FastAPI service for managing tasks, with filtering by due date and priority.
+A simple FastAPI-based task manager with priority and due-date filtering.
 
----
-
-## Getting Started
+## Quick Start
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-The API is then available at `http://localhost:8000`.  
-Interactive docs: `http://localhost:8000/docs`
+Swagger UI: http://127.0.0.1:8000/docs
 
----
+## API Endpoints
+
+### `GET /health`
+Returns `{"status": "ok"}`.
+
+### `GET /tasks`
+
+List all tasks. Optionally filter by `priority` and/or `due_date`.
+
+| Parameter  | Type   | Values                   | Description                 |
+|------------|--------|--------------------------|-----------------------------|
+| `priority` | string | `high`, `medium`, `low`  | Filter by priority level    |
+| `due_date` | string | `YYYY-MM-DD`             | Filter by exact due date    |
+
+Both filters can be combined.
+
+#### Examples
+
+**All tasks:**
+```bash
+curl http://localhost:8000/tasks
+```
+
+**Filter by priority:**
+```bash
+curl "http://localhost:8000/tasks?priority=high"
+```
+
+**Filter by due date:**
+```bash
+curl "http://localhost:8000/tasks?due_date=2026-04-30"
+```
+
+**Combine both filters:**
+```bash
+curl "http://localhost:8000/tasks?priority=high&due_date=2026-05-01"
+```
+
+**Python requests:**
+```python
+import requests
+
+# Filter high-priority tasks due on 2026-05-01
+tasks = requests.get(
+    "http://localhost:8000/tasks",
+    params={"priority": "high", "due_date": "2026-05-01"}
+).json()
+```
+
+### `GET /tasks/{task_id}`
+
+Retrieve a single task by ID.
+
+```bash
+curl http://localhost:8000/tasks/1
+```
 
 ## Running Tests
 
@@ -22,106 +76,28 @@ Interactive docs: `http://localhost:8000/docs`
 pytest -v
 ```
 
----
+## PR Summary
 
-## API Endpoints
+### What
+Added `due_date` filtering to the `/tasks` endpoint alongside the existing `priority` filter. Both parameters are optional and combinable.
 
-### `GET /health`
+### Why
+Users need to surface urgent items by combining priority and deadline—previously only priority filtering existed.
 
-Returns service liveness.
+### How
+- Extended the `Task` Pydantic model with an optional `due_date: Optional[str]` field (ISO 8601)
+- Updated `list_tasks()` to accept and apply the new query parameter
+- Input validation rejects non-ISO date strings and unknown priority values with HTTP 422
+- Added a `GET /tasks/{task_id}` convenience endpoint
 
-```bash
-curl http://localhost:8000/health
-# {"status":"ok"}
-```
+### Tests
+15 test cases added covering:
+- All three priority values
+- Due-date match, no-match, and tasks without a due date
+- Combined filter scenarios
+- Invalid date format (non-ISO, garbage strings)
+- Invalid priority value
+- 404 for unknown task ID
 
----
-
-### `GET /tasks`
-
-Returns the list of tasks. Supports two optional query parameters that can be used independently or combined.
-
-| Parameter  | Type   | Format     | Description                          |
-|------------|--------|------------|--------------------------------------|
-| `due_date` | string | YYYY-MM-DD | Return only tasks due on this date   |
-| `priority` | string | high \| medium \| low | Return only tasks with this priority |
-
-#### Example 1 – Filter by due date
-
-```bash
-curl "http://localhost:8000/tasks?due_date=2026-04-30"
-```
-
-```python
-import requests
-resp = requests.get("http://localhost:8000/tasks", params={"due_date": "2026-04-30"})
-print(resp.json())
-# [{"id": 1, "title": "Create session plan", "priority": "high",
-#   "completed": false, "due_date": "2026-04-30"}]
-```
-
-#### Example 2 – Filter by priority
-
-```bash
-curl "http://localhost:8000/tasks?priority=medium"
-```
-
-```python
-import requests
-resp = requests.get("http://localhost:8000/tasks", params={"priority": "medium"})
-print(resp.json())
-# [{"id": 2, "title": "Prepare demo repo", "priority": "medium",
-#   "completed": false, "due_date": "2026-05-01"}]
-```
-
-#### Example 3 – Combine both filters
-
-```bash
-curl "http://localhost:8000/tasks?due_date=2026-05-01&priority=medium"
-```
-
-```python
-import requests
-resp = requests.get(
-    "http://localhost:8000/tasks",
-    params={"due_date": "2026-05-01", "priority": "medium"},
-)
-print(resp.json())
-# [{"id": 2, "title": "Prepare demo repo", "priority": "medium",
-#   "completed": false, "due_date": "2026-05-01"}]
-```
-
-#### Example 4 – No filters (return all tasks)
-
-```bash
-curl http://localhost:8000/tasks
-```
-
-```python
-import requests
-resp = requests.get("http://localhost:8000/tasks")
-print(resp.json())
-# Returns all 3 tasks
-```
-
----
-
-## Task Model
-
-```json
-{
-  "id": 1,
-  "title": "Create session plan",
-  "priority": "high",
-  "completed": false,
-  "due_date": "2026-04-30"
-}
-```
-
-| Field       | Type    | Notes                              |
-|-------------|---------|------------------------------------|
-| `id`        | integer | Unique task identifier             |
-| `title`     | string  | Task description                   |
-| `priority`  | string  | `high`, `medium`, or `low`         |
-| `completed` | boolean | Defaults to `false`                |
-| `due_date`  | string  | ISO 8601 date (`YYYY-MM-DD`), optional |
+### Rollout
+No breaking changes. Existing callers that don't pass `due_date` receive the same response as before.
